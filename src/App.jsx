@@ -1,13 +1,27 @@
+import { Suspense } from "react";
+import "./App.css";
+import AvailablePlayers from "./components/AvailablePlayers/AvailablePlayers";
+import Navbar from "./components/Navbar/Navbar";
+// import SelectedPlayers from "./components/SelectedPlayers/SelectedPlayers";
 
-import './App.css'
+const fetchPlayers = async () => {
+  const res = await fetch("players.json");
+  return res.json();
+};
 
 function App() {
-
+  const playersPromise = fetchPlayers();
   return (
     <>
-    <h1></h1>
+      <Navbar></Navbar>
+      <Suspense
+        fallback={<span className="loading loading-bars loading-xl mx-auto flex text-[#BB604C]"></span>}
+      >
+        <AvailablePlayers playersPromise={playersPromise}></AvailablePlayers>
+      </Suspense>
+      {/* <SelectedPlayers></SelectedPlayers> */}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
