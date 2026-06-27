@@ -13,11 +13,18 @@ const playersPromise = fetchPlayers();
 function App() {
   const [toggle, setToggle] = useState(true);
   const [availableBalance, setAvailableBalance] = useState(60000000);
+  const [selectedPlayer, setSelectedPlayer] = useState([])
+
+  const removePlayer = (p)=>{
+    const filteredPlayer = selectedPlayer.filter(player => player.playerName !== p.playerName)
+    setSelectedPlayer(filteredPlayer)
+    setAvailableBalance(availableBalance + p.price)
+  }
   return (
     <>
       <Navbar availableBalance={availableBalance}></Navbar>
       <div className="max-w-300 mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Available Players</h1>
+        <h1 className="text-2xl font-bold">{toggle ? 'Available Players' : `Selected Players (${selectedPlayer.length}/6)`}</h1>
         <div>
           <button
             onClick={() => setToggle(true)}
@@ -29,7 +36,7 @@ function App() {
             onClick={() => setToggle(false)}
             className={`rounded-r-xl border-l-0 border-gray-200 border py-3 px-4 ${toggle || "bg-[#E7FE29] font-bold"}`}
           >
-            Selected <span>(0)</span>
+            Selected <span>({selectedPlayer.length})</span>
           </button>
         </div>
       </div>
@@ -43,10 +50,12 @@ function App() {
             playersPromise={playersPromise}
             availableBalance={availableBalance}
             setAvailableBalance={setAvailableBalance}
+            selectedPlayer={selectedPlayer}
+            setSelectedPlayer={setSelectedPlayer}
           ></AvailablePlayers>
         </Suspense>
       ) : (
-        <SelectedPlayers></SelectedPlayers>
+        <SelectedPlayers selectedPlayer={selectedPlayer} removePlayer={removePlayer}></SelectedPlayers>
       )}
     </>
   );
